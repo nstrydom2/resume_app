@@ -2,10 +2,10 @@
 /* font-family: 'Courier Prime', monospace;
 font-family: 'Heebo', sans-serif; */
 :root {
-  --primaryColor: #9C07B6;
-  --primaryDarkColor: #3D0048;
-  --primaryHoverColor: #900AA8;
-  --secondaryColor: #F9B000;
+  --primaryColor: #034078;
+  --primaryDarkColor: #0A1128;
+  --primaryHoverColor: #001F54;
+  --secondaryColor: #1282A2;
   --baseColor: #21243D;
   --baseFont: 'Heebo', sans-serif;
   --titleFont: 'Courier Prime', monospace;
@@ -13,7 +13,7 @@ font-family: 'Heebo', sans-serif; */
   --medium: 500;
   --bold: 700;
   --black: 900;
-  --lightBg: #F1F1F1;
+  --lightBg: #c5c8dd;
 }
 html {
   scroll-behavior: smooth;
@@ -316,11 +316,11 @@ a, .btn {
 .progress.progressStyle {
 	height: 8px;
 	padding: 1px;
-	background-color: var(--secondaryColor);
+	background-color: #fff;
 	border-radius: 3px;
 }
 .progressStyle .progress-bar {
-	background-color: #fff;
+	background-color: var(--primaryColor);
 	border-radius: 3px;
 }
 .progressCol + .progressCol {
