@@ -27,13 +27,19 @@ SECRET_KEY = '24@ap5avx$hl4vsn#64gw6o7@^!fmx9u=ahwvcnar98o_!fdke'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['nickthedev.site']
+ALLOWED_HOSTS = [
+']
 RESTRICT_ADMIN = True
-ALLOWED_ADMIN_IPS = ['127.0.0.1', '::1', '104.159.149.103']
-ALLOWED_ADMIN_IP_RANGES = ['127.0.0.0/24', '::/1', '104.159.149.0/24']
+ALLOWED_ADMIN_IPS = ['127.0.0.1', '::1', '47.41.118.128']
+ALLOWED_ADMIN_IP_RANGES = ['127.0.0.0/24', '::/1', '47.41.118.0/24']
 RESTRICTED_APP_NAMES = ['admin']
 TRUST_PRIVATE_IP = True
 
+
+
+ALLOWED_HOSTS = [
+		'.nickthedev.rocks'
+]
 
 
 # Application definition
@@ -145,40 +151,3 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
-
-
-# Custom middleware
-MIDDLEWARE += [
-    "resume_app.middleware.LogIPMiddleware",
-]
-
-
-
-# settings.py
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-
-    "formatters": {
-        "connections": {
-            "format": "%(asctime)s %(levelname)s %(message)s",
-        },
-    },
-
-    "handlers": {
-        "connections_file": {
-            "level": "INFO",
-            "class": "logging.FileHandler",
-            "filename": BASE_DIR / "logs/connections.log",
-            "formatter": "connections",
-        },
-    },
-
-    "loggers": {
-        "connections": {
-            "handlers": ["connections_file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-    },
-}

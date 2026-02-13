@@ -54,7 +54,9 @@ Start Content
           <div class="col-md-6 pColMain">
             <div class="pCol">
               <a href="{% url 'main:blog' slug=obj.slug %}" >
-              <img src="{{obj.image.url}}" alt="..." class="pImg">
+                {% if obj.image.is_exists %}
+		 <img src="{{obj.image.url}}" alt="..." class="pImg">
+		{% endif %}
               </a>
             </div>
           </div>
