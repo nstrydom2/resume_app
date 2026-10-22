@@ -1,35 +1,77 @@
 {% load static %}
-<!-- ================================
-Start Navigation Bar
-================================= -->
-<header>
-    <div class="headerCol">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-        <div class="col-auto">
-            <div class="logoCol"><a href="{% url 'main:home' %}"><img src="{% static 'images/logo.png' %}" alt="..."></a></div>
-        </div>
-        <div class="col">
-            <div class="d-md-none">
-            <button class="navToggle">
-                <span class="navToggle__text">Toggle Menu</span>
+<header class="site-header" id="siteHeader">
+  <div class="container">
+    <div class="header-inner">
+      <a class="brand" href="{% url 'main:home' %}" aria-label="{% firstof me.get_full_name 'Nick Strydom' %} — home">
+        <span class="brand-mark" aria-hidden="true">&lt;/&gt;</span>
+        <span class="brand-text">
+          <strong>{% firstof me.get_full_name "Nick Strydom" %}</strong>
+          <small>{% firstof me.userprofile.title "Full Stack Developer" %}</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-controls="siteNav" aria-expanded="false" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" id="siteNav" aria-label="Primary">
+        {% with url_name=request.resolver_match.url_name %}
+        <ul class="nav-links">
+          <li><a href="{% url 'main:home' %}" class="{% if url_name == 'home' %}is-active{% endif %}"{% if url_name == 'home' %} aria-current="page"{% endif %}>Home</a></li>
+          <li><a href="{% url 'main:portfolios' %}" class="{% if url_name == 'portfolios' or url_name == 'portfolio' %}is-active{% endif %}"{% if url_name == 'portfolios' or url_name == 'portfolio' %} aria-current="page"{% endif %}>Projects</a></li>
+          <li><a href="{% url 'main:blogs' %}" class="{% if url_name == 'blogs' or url_name == 'blog' %}is-active{% endif %}"{% if url_name == 'blogs' or url_name == 'blog' %} aria-current="page"{% endif %}>Journal</a></li>
+          <li><a href="{% url 'main:contact' %}" class="{% if url_name == 'contact' %}is-active{% endif %}"{% if url_name == 'contact' %} aria-current="page"{% endif %}>Contact</a></li>
+        </ul>
+        {% endwith %}
+
+        <div class="nav-actions">
+          <div class="theme-picker" data-theme-picker>
+            <button class="theme-toggle" type="button" aria-expanded="false" aria-controls="themePanel" aria-label="Change color palette">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 3a9 9 0 1 0 0 18h1.2a1.8 1.8 0 0 0 1.32-3.02 1.8 1.8 0 0 1 1.32-3.02H18a3 3 0 0 0 3-3A9 9 0 0 0 12 3Z" stroke="currentColor" stroke-width="1.6"/>
+                <circle cx="7.5" cy="10.5" r="1.1" fill="currentColor"/>
+                <circle cx="10.5" cy="7" r="1.1" fill="currentColor"/>
+                <circle cx="15" cy="7.5" r="1.1" fill="currentColor"/>
+              </svg>
             </button>
+            <div class="theme-panel" id="themePanel">
+              <p class="theme-panel-title">Color palette</p>
+              <div class="theme-options">
+                <button type="button" class="theme-option" data-theme-value="midnight" aria-pressed="false">
+                  <span class="theme-swatch theme-swatch--midnight" aria-hidden="true"></span>
+                  <span>Midnight</span>
+                </button>
+                <button type="button" class="theme-option" data-theme-value="aurora" aria-pressed="false">
+                  <span class="theme-swatch theme-swatch--aurora" aria-hidden="true"></span>
+                  <span>Aurora</span>
+                </button>
+                <button type="button" class="theme-option" data-theme-value="daylight" aria-pressed="false">
+                  <span class="theme-swatch theme-swatch--daylight" aria-hidden="true"></span>
+                  <span>Daylight</span>
+                </button>
+                <button type="button" class="theme-option" data-theme-value="ember" aria-pressed="false">
+                  <span class="theme-swatch theme-swatch--ember" aria-hidden="true"></span>
+                  <span>Ember</span>
+                </button>
+                <button type="button" class="theme-option" data-theme-value="forest" aria-pressed="false">
+                  <span class="theme-swatch theme-swatch--forest" aria-hidden="true"></span>
+                  <span>Forest</span>
+                </button>
+              </div>
             </div>
-            <div class="navCollapseCol">
-            <div class="navCol">
-                <ul>
-                <li><a href="{%url 'main:home'%}">Home</a></li>
-                <li><a href="{%url 'main:portfolios' %}">Portfolio</a></li>
-                <li><a href="{% url 'main:blogs' %}">Blog</a></li>
-                <li><a href="{%url 'main:contact'%}">Contact</a></li>
-                </ul>
-            </div>
-            </div>
+          </div>
+
+          <a class="btn btn-primary btn-sm header-cta" href="{% url 'main:contact' %}">
+            Let's talk
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
         </div>
-        </div>
+      </nav>
     </div>
-    </div>
+  </div>
 </header>
-<!-- ================================
-End Navigation Bar
-================================= -->
+<div class="nav-overlay" data-nav-close aria-hidden="true"></div>

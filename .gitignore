@@ -59,6 +59,7 @@ cover/
 
 # Django stuff:
 *.log
+logs/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -140,3 +141,6 @@ dmypy.json
 cython_debug/
 
 .DS_Store
+
+
+.idea/

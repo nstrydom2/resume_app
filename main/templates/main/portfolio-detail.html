@@ -1,59 +1,138 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-<!-- ================================
-Start SEO blocks
-================================= -->
-{% block title %}{% endblock %}
-{% block decription %}{% endblock %}
-{% block keywords %}{% endblock %}
-<!-- ================================
-END SEO blocks
-================================= -->
+{% block title %}{{ object.name|default:"Project" }} — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
+{% block description %}{{ object.description|default:"A full stack project case study."|truncatechars:160 }}{% endblock %}
+{% block og_title %}{{ object.name|default:"Project" }} — Case study{% endblock %}
+{% block og_description %}{{ object.description|default:"A full stack project case study."|truncatechars:160 }}{% endblock %}
 
-<!-- ================================
-Start CSS blocks
-================================= -->
-{% block extend_header %}{% endblock %}
-<!-- ================================
-END CSS blocks
-================================= -->
-
-<!-- ================================
-Start script blocks
-================================= -->
-{% block extend_footer %}{% endblock %}
-<!-- ================================
-END script blocks
-================================= -->
-
-<!-- ================================
-Start Content
-================================= -->
 {% block content %}
-<section>
-  <div class="innerPageBannerCol">
-    <div class="container">
-      <div class="row g-4 g-md-3  align-items-center">
-        <div class="col-md-6">
-          <div class="bannerContent">
-            <h1 class="xlTitle pb-md-3">{{object.name}}</h1>
+<section class="case-hero">
+  <div class="hero-bg" aria-hidden="true">
+    <span class="hero-blob hero-blob--two"></span>
+    <span class="hero-grid"></span>
+  </div>
+  <div class="container">
+    <a class="back-link" href="{% url 'main:portfolios' %}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m6 6-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      All projects
+    </a>
+    <span class="eyebrow">Case study{% if object.date %} · {{ object.date|date:"Y" }}{% endif %}</span>
+    <h1>{{ object.name|default:"Untitled project" }}</h1>
+    {% if object.description %}<p class="case-lead">{{ object.description }}</p>{% endif %}
+
+    <div class="case-actions">
+      {% if object.live_url %}
+      <a class="btn btn-primary" href="{{ object.live_url }}" target="_blank" rel="noopener noreferrer">
+        View live project
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 5h5v5M19 5l-8 8M19 14v5H5V5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      {% endif %}
+      {% if object.repository_url %}
+      <a class="btn btn-outline" href="{{ object.repository_url }}" target="_blank" rel="noopener noreferrer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.5 2.87 8.32 6.84 9.67.5.1.68-.22.68-.49v-1.72c-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.36 1.12 2.94.86.09-.67.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.33 9.33 0 0 1 12 6.84c.85 0 1.71.12 2.51.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.35 4.8-4.58 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z"/></svg>
+        View source
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if object.image %}
+<div class="container">
+  <figure class="case-cover reveal">
+    <img src="{{ object.image.url }}" alt="{{ object.name|default:'Project' }} cover image">
+  </figure>
+</div>
+{% endif %}
+
+<section class="case-body">
+  <div class="container">
+    <div class="case-layout">
+      <article class="prose">
+        {% if object.body %}
+          {{ object.body|safe }}
+        {% elif object.description %}
+          <p>{{ object.description }}</p>
+        {% else %}
+          <p>A detailed write-up for this project is coming soon.</p>
+        {% endif %}
+      </article>
+
+      <aside class="case-sidebar">
+        <div class="side-card">
+          <h2>Project details</h2>
+          <div class="fact-list">
+            {% if object.date %}
+            <div>
+              <span class="fact-label">Year</span>
+              <span>{{ object.date|date:"F Y" }}</span>
+            </div>
+            {% endif %}
+            {% if object.technology_list %}
+            <div>
+              <span class="fact-label">Stack</span>
+              <ul class="tech-list">
+                {% for tech in object.technology_list %}<li>{{ tech }}</li>{% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+            <div>
+              <span class="fact-label">Project type</span>
+              <span>Full stack web application</span>
+            </div>
+          </div>
+
+          {% if object.live_url or object.repository_url %}
+          <div class="side-card-actions">
+            {% if object.live_url %}<a class="btn btn-primary btn-sm" href="{{ object.live_url }}" target="_blank" rel="noopener noreferrer">Live demo</a>{% endif %}
+            {% if object.repository_url %}<a class="btn btn-outline btn-sm" href="{{ object.repository_url }}" target="_blank" rel="noopener noreferrer">Source code</a>{% endif %}
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="side-card side-card--accent">
+          <h2>Like the way this is built?</h2>
+          <p>I'm always happy to talk through a new product, an existing codebase, or a tricky problem.</p>
+          <a class="btn btn-primary btn-sm" href="{% url 'main:contact' %}">Get in touch</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+{% if related_projects %}
+<section class="section section--soft">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Keep exploring</span>
+        <h2 class="section-title">More projects.</h2>
+      </div>
+      <a class="text-link" href="{% url 'main:portfolios' %}">View all</a>
+    </div>
+    <div class="project-grid">
+      {% for p in related_projects %}
+      <article class="project-card reveal" style="--reveal-delay: {{ forloop.counter0 }}00ms">
+        <a class="project-media" href="{{ p.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+          {% if p.image %}
+          <img src="{{ p.image.url }}" alt="" loading="lazy">
+          {% else %}
+          <span class="project-placeholder"><span>{{ p.name|default:"Project"|slice:":2" }}</span></span>
+          {% endif %}
+        </a>
+        <div class="project-body">
+          <span class="project-kicker">Case study</span>
+          <h3><a href="{{ p.get_absolute_url }}">{{ p.name|default:"Untitled project" }}</a></h3>
+          <p class="project-description">{{ p.description|default:""|truncatechars:120 }}</p>
+          <div class="project-links">
+            <a class="project-link" href="{{ p.get_absolute_url }}">Read case study</a>
           </div>
         </div>
-      </div>
+      </article>
+      {% endfor %}
     </div>
   </div>
 </section>
-
-<section>
-  <div class="sectionSpaceSm">
-    <div class="container">
-      {{object.body|safe}}
-    </div>
-  </div>
-</section>
-<!-- ================================
-End Content
-================================= -->
-{%endblock%}
-    
+{% endif %}
+{% endblock %}

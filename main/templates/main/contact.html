@@ -1,71 +1,95 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-<!-- ================================
-Start SEO blocks
-================================= -->
-{% block title %}{% endblock %}
-{% block decription %}{% endblock %}
-{% block keywords %}{% endblock %}
-<!-- ================================
-END SEO blocks
-================================= -->
+{% block title %}Contact — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
+{% block description %}Start a conversation about a new project, an existing codebase, or a full stack build.{% endblock %}
+{% block og_title %}Contact — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
+{% block og_description %}Start a conversation about a new project or an existing codebase.{% endblock %}
 
-<!-- ================================
-Start CSS blocks
-================================= -->
-{% block extend_header %}{% endblock %}
-<!-- ================================
-END CSS blocks
-================================= -->
-
-<!-- ================================
-Start script blocks
-================================= -->
-{% block extend_footer %}{% endblock %}
-<!-- ================================
-END script blocks
-================================= -->
-
-<!-- ================================
-Start Content
-================================= -->
 {% block content %}
-<section>
-  <div class="innerPageBannerCol">
-    <div class="container">
-      <div class="row g-4 g-md-3  align-items-center">
-        <div class="col-md-6">
-          <div class="bannerContent">
-            <h1 class="xlTitle pb-md-3">Contact me below</h1>
+<section class="page-hero">
+  <div class="hero-bg" aria-hidden="true">
+    <span class="hero-blob hero-blob--one"></span>
+    <span class="hero-grid"></span>
+  </div>
+  <div class="container">
+    <span class="eyebrow">Contact</span>
+    <h1>Let's build something good.</h1>
+    <p>Tell me a little about what you're working on. Whether it's a new product or an existing codebase that needs a hand, I'd like to hear about it.</p>
+  </div>
+</section>
+
+<section class="section section--topless">
+  <div class="container">
+    <div class="contact-grid">
+      <aside class="contact-info">
+        <div class="contact-card">
+          <h2>Start a conversation</h2>
+          <p>Share the idea, the constraints, and where you are in the process. I'll reply as soon as I can.</p>
+
+          <ul class="contact-list">
+            {% if me.email %}
+            <li>
+              <span class="contact-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.7"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span><strong>Email</strong><a href="mailto:{{ me.email }}">{{ me.email }}</a></span>
+            </li>
+            {% endif %}
+            <li>
+              <span class="contact-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.5 2.87 8.32 6.84 9.67.5.1.68-.22.68-.49v-1.72c-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.36 1.12 2.94.86.09-.67.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.33 9.33 0 0 1 12 6.84c.85 0 1.71.12 2.51.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.35 4.8-4.58 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z"/></svg>
+              </span>
+              <span><strong>GitHub</strong><a href="https://www.github.com/nstrydom2" target="_blank" rel="noopener noreferrer">github.com/nstrydom2</a></span>
+            </li>
+            <li>
+              <span class="contact-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M8 10v7M8 7.2v.1M12 17v-4a2.5 2.5 0 0 1 5 0v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              </span>
+              <span><strong>LinkedIn</strong><a href="https://www.linkedin.com/in/nicholas-strydom-955951139/" target="_blank" rel="noopener noreferrer">Connect with me</a></span>
+            </li>
+          </ul>
+
+          <div class="contact-note">
+            <span class="status-dot" aria-hidden="true"></span>
+            Typical reply time: within 1–2 business days.
           </div>
         </div>
+      </aside>
+
+      <div class="contact-form-wrap">
+        <form class="contact-form" method="post" action="{% url 'main:contact' %}">
+          {% csrf_token %}
+          {% if form.non_field_errors %}
+          <div class="form-alert">{{ form.non_field_errors }}</div>
+          {% endif %}
+
+          <div class="field">
+            <label for="{{ form.name.id_for_label }}">Your name <span aria-hidden="true">*</span></label>
+            {{ form.name }}
+            {% for error in form.name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          </div>
+
+          <div class="field">
+            <label for="{{ form.email.id_for_label }}">Email address <span aria-hidden="true">*</span></label>
+            {{ form.email }}
+            {% for error in form.email.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          </div>
+
+          <div class="field">
+            <label for="{{ form.message.id_for_label }}">What are you working on? <span aria-hidden="true">*</span></label>
+            {{ form.message }}
+            {% for error in form.message.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          </div>
+
+          <button class="btn btn-primary" type="submit">
+            Send message
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 12 16-8-5.5 16L11 14l-7-2Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <p class="form-note">Your details are only used to reply to this message.</p>
+        </form>
       </div>
     </div>
   </div>
 </section>
-
-<section>
-  <div class="lightBg">
-    <div class="container">
-        <form id="contactForm" method="POST" action="/contact/">
-        {% csrf_token %}
-            <label for="name">Name</label>
-            {{form.name}}
-
-            <label for="email">Email</label>
-            {{form.email}}
-
-            <label for="subject">Message</label>
-            {{form.message}}
-
-            <input class='btn btnPrimary' type="submit" value="Submit">
-        </form>
-    </div>
-  </div>
-</section>
-<!-- ================================
-End Content
-================================= -->
-{%endblock%}
-    
+{% endblock %}

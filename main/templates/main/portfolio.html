@@ -1,71 +1,113 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-<!-- ================================
-Start SEO blocks
-================================= -->
-{% block title %}{% endblock %}
-{% block decription %}{% endblock %}
-{% block keywords %}{% endblock %}
-<!-- ================================
-END SEO blocks
-================================= -->
+{% block title %}Projects — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
+{% block description %}Selected full stack projects by {% firstof me.get_full_name "Nick Strydom" %} — case studies covering backend architecture, APIs, data and frontend craft.{% endblock %}
+{% block og_title %}Projects — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
+{% block og_description %}Selected full stack projects and case studies.{% endblock %}
 
-<!-- ================================
-Start CSS blocks
-================================= -->
-{% block extend_header %}{% endblock %}
-<!-- ================================
-END CSS blocks
-================================= -->
-
-<!-- ================================
-Start script blocks
-================================= -->
-{% block extend_footer %}{% endblock %}
-<!-- ================================
-END script blocks
-================================= -->
-
-<!-- ================================
-Start Content
-================================= -->
 {% block content %}
-<section>
-  <div class="innerPageBannerCol">
-    <div class="container">
-      <div class="row g-4 g-md-3  align-items-center">
-        <div class="col-md-6">
-          <div class="bannerContent">
-            <h1 class="xlTitle pb-md-3">See my recent projects below</h1>
-          </div>
-        </div>
-      </div>
-    </div>
+<section class="page-hero">
+  <div class="hero-bg" aria-hidden="true">
+    <span class="hero-blob hero-blob--one"></span>
+    <span class="hero-grid"></span>
+  </div>
+  <div class="container">
+    <span class="eyebrow">Selected work</span>
+    <h1>Projects with purpose.</h1>
+    <p>Case studies from the full stack: the problem, the architecture, the trade-offs, and the details that made the product feel right.</p>
   </div>
 </section>
 
-<section>
-  <div class="lightBg">
-    <div class="container">
-      <div class="portfolioContentMain">
-        <div class="row g-3 g-md-4 g-lg-5 portfolioRow">
-          {% for obj in object_list %}
-          <div class="col-md-6 pColMain">
-            <div class="pCol">
-              <a href="{% url 'main:portfolio' slug=obj.slug %}" >
-              <img src="{{obj.image.url}}" alt="..." class="pImg">
-              </a>
-            </div>
-          </div>
-          {% endfor %}
-          
-        </div>
-      </div>
+<section class="section section--topless">
+  <div class="container">
+    {% if object_list %}
+    <div class="filter-bar" data-project-filters>
+      <button type="button" class="filter-btn is-active" data-filter="all">All projects</button>
+      {% for tech in technologies %}
+      <button type="button" class="filter-btn" data-filter="{{ tech|lower }}">{{ tech }}</button>
+      {% endfor %}
+      <span class="filter-count" data-filter-count>{{ paginator.count }} project{{ paginator.count|pluralize }}</span>
     </div>
+
+    <div class="project-grid" data-project-grid>
+      {% for p in object_list %}
+      <article class="project-card reveal" data-project-card data-technologies="{% for tech in p.technology_list %}{{ tech|lower }}{% if not forloop.last %}|{% endif %}{% endfor %}">
+        <a class="project-media" href="{{ p.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+          {% if p.image %}
+          <img src="{{ p.image.url }}" alt="" loading="lazy">
+          {% else %}
+          <span class="project-placeholder"><span>{{ p.name|default:"Project"|slice:":2" }}</span></span>
+          {% endif %}
+          {% if p.date %}<span class="project-year">{{ p.date|date:"Y" }}</span>{% endif %}
+        </a>
+        <div class="project-body">
+          <span class="project-kicker">Case study</span>
+          <h2 class="project-title"><a href="{{ p.get_absolute_url }}">{{ p.name|default:"Untitled project" }}</a></h2>
+          <p class="project-description">{{ p.description|default:"A full stack build focused on clean architecture and a considered user experience."|truncatechars:170 }}</p>
+          {% if p.technology_list %}
+          <ul class="tech-list" aria-label="Technologies used">
+            {% for tech in p.technology_list %}<li>{{ tech }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+          <div class="project-links">
+            <a class="project-link" href="{{ p.get_absolute_url }}">
+              Read case study
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            {% if p.live_url %}
+            <a class="project-link project-link--muted" href="{{ p.live_url }}" target="_blank" rel="noopener noreferrer">
+              Live demo
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 5h5v5M19 5l-8 8M19 14v5H5V5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            {% endif %}
+            {% if p.repository_url %}
+            <a class="project-link project-link--muted" href="{{ p.repository_url }}" target="_blank" rel="noopener noreferrer">
+              Source
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 5h5v5M19 5l-8 8M19 14v5H5V5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <div class="empty-state" data-filter-empty hidden>
+      <span class="empty-state-mark" aria-hidden="true">&lt;/&gt;</span>
+      <h3>Nothing here yet</h3>
+      <p>No projects match that technology. Try another filter.</p>
+    </div>
+
+    {% if is_paginated %}
+    <nav class="pagination" aria-label="Pagination">
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}" aria-label="Previous page">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m6 6-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      {% endif %}
+      {% for num in paginator.page_range %}
+        {% if num == page_obj.number %}
+        <span class="is-current" aria-current="page">{{ num }}</span>
+        {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+        <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}" aria-label="Next page">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6 6 6-6-6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      {% endif %}
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="empty-state">
+      <span class="empty-state-mark" aria-hidden="true">&lt;/&gt;</span>
+      <h3>Projects are being updated</h3>
+      <p>New case studies are on the way. Check back soon, or start a conversation about what you're building.</p>
+      <a class="btn btn-outline btn-sm" href="{% url 'main:contact' %}">Get in touch</a>
+    </div>
+    {% endif %}
   </div>
 </section>
-<!-- ================================
-End Content
-================================= -->
-{% endblock%}    
+{% endblock %}

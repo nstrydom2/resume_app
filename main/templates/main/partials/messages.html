@@ -1,5 +1,21 @@
 {% if messages %}
-    {% for message in messages %}
-        {% if message.tags %}  <script>alert("{{ message }}")</script> {% endif %}
-    {% endfor %}
+<div class="toast-stack" aria-live="polite" aria-atomic="true">
+  {% for message in messages %}
+  <div class="site-toast site-toast--{{ message.tags|default:'info' }}" data-toast>
+    <span class="site-toast-icon" aria-hidden="true">
+      {% if message.tags == 'success' %}
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m5 12 4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      {% elif message.tags == 'error' %}
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 3h.01M10.3 3.6 2.6 17a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      {% else %}
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5m0-8h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      {% endif %}
+    </span>
+    <p>{{ message }}</p>
+    <button class="site-toast-close" type="button" aria-label="Dismiss notification" data-toast-close>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  {% endfor %}
+</div>
 {% endif %}

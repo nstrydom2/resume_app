@@ -1,263 +1,385 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-<!-- ================================
-Start SEO blocks
-================================= -->
-{% block title %}{% endblock %}
-{% block decription %}{% endblock %}
-{% block keywords %}{% endblock %}
-<!-- ================================
-END SEO blocks
-================================= -->
+{% block title %}{% firstof me.get_full_name "Nick Strydom" %} — Full Stack Developer{% endblock %}
+{% block description %}Portfolio of {% firstof me.get_full_name "Nick Strydom" %}, a full stack developer building fast, reliable web applications with Django, Python and modern JavaScript.{% endblock %}
+{% block og_title %}{% firstof me.get_full_name "Nick Strydom" %} — Full Stack Developer{% endblock %}
+{% block og_description %}Portfolio of {% firstof me.get_full_name "Nick Strydom" %}, a full stack developer building fast, reliable web applications.{% endblock %}
 
-<!-- ================================
-Start CSS blocks
-================================= -->
-{% block extend_header %}{% endblock %}
-<!-- ================================
-END CSS blocks
-================================= -->
-
-<!-- ================================
-Start script blocks
-================================= -->
-{% block extend_footer %}{% endblock %}
-<!-- ================================
-END script blocks
-================================= -->
-
-<!-- ================================
-Start Content
-================================= -->
 {% block content %}
-<section>
-  <div class="bannerSection">
-    <div class="container">
-      <div class="row g-4 g-md-3  align-items-center">
-        <div class="col-md-auto order-md-last">
-          <div class="bannerUserImg">
-            <img src="{{me.userprofile.avatar.url}}" alt="{{me.first_name|title}} {{me.last_name|title}} avatar">
+<section class="hero">
+  <div class="hero-bg" aria-hidden="true">
+    <span class="hero-blob hero-blob--one"></span>
+    <span class="hero-blob hero-blob--two"></span>
+    <span class="hero-grid"></span>
+  </div>
+
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <span class="eyebrow">{% firstof me.userprofile.title "Full Stack Developer" %}</span>
+        <h1 class="hero-title">
+          Hi, I'm {% firstof me.first_name "Nick" %}.<br>
+          I build <span class="gradient-text">full stack</span> products that ship.
+        </h1>
+        <p class="hero-lead">
+          {% if profile.bio %}
+            {{ profile.bio|linebreaksbr }}
+          {% else %}
+            I design and build reliable web applications end to end — clean interfaces, thoughtful APIs, and the data layer that holds it all together.
+          {% endif %}
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="{% url 'main:portfolios' %}">
+            View my work
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          {% if me.userprofile.cv %}
+          <a class="btn btn-outline" href="{{ me.userprofile.cv.url }}" download>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Download CV
+          </a>
+          {% else %}
+          <a class="btn btn-outline" href="{% url 'main:contact' %}">Get in touch</a>
+          {% endif %}
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-value" data-count="{{ project_count }}">{{ project_count }}</span>
+            <span class="stat-label">Projects</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" data-count="{{ skill_count }}">{{ skill_count }}</span>
+            <span class="stat-label">Technologies</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" data-count="{{ certificate_count }}">{{ certificate_count }}</span>
+            <span class="stat-label">Certifications</span>
           </div>
         </div>
-        <div class="col-md">
-          <div class="bannerContent">
-            <h1 class="xlTitle pb-3">Hi, I’m {{me.first_name|title}}, <br> a {{me.userprofile.title}} </br></h1>
-            <p>{{me.userprofile.bio}}</p>
-            <div class="bannerBtnCol">
-              <div class="row">
-                <div class="col-auto">
-                  <a download href="{{me.userprofile.cv.url}}" class="btn btnPrimary">Download Resume</a>
-                </div>
-                <div class="col-auto">
-                  <a href="{% url 'main:contact' %}" class="btn btnOutline">Contact</a>
-                </div>
-              </div>
-            </div>
+      </div>
+
+      <div class="hero-visual reveal">
+        <div class="avatar-orbit">
+          <span class="orbit-ring" aria-hidden="true"></span>
+          <span class="orbit-ring orbit-ring--inner" aria-hidden="true"></span>
+          <div class="avatar-frame">
+            {% if me.userprofile.avatar %}
+            <img src="{{ me.userprofile.avatar.url }}" alt="{% firstof me.get_full_name 'Nick Strydom' %}">
+            {% else %}
+            <span class="avatar-initials">{{ me.first_name|default:"N"|first|upper }}{{ me.last_name|default:"S"|first|upper }}</span>
+            {% endif %}
           </div>
+          {% for sk in key_skills|slice:":3" %}
+          <span class="floating-chip floating-chip--{{ forloop.counter }}">{{ sk.name }}</span>
+          {% endfor %}
+        </div>
+        <div class="floating-note">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span>
+            <strong>Full stack, end to end</strong>
+            <small>From database schema to final pixel</small>
+          </span>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section>
-  <div class="sectionSpace pt-0">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-auto">
-          <div class="keySkillCol">
-            <h4 class="smTitle pb-3">Key Skills</h4>
-            {% for sk in me.userprofile.skills.all %}
-            {% if sk.is_key_skill %}
-            <div class="keySkillCard">
+{% if skills %}
+<section class="tech-ribbon" aria-label="Technologies I work with">
+  <div class="tech-track">
+    {% for sk in skills %}<span class="tech-item">{{ sk.name }}</span>{% endfor %}
+    {% for sk in skills %}<span class="tech-item" aria-hidden="true">{{ sk.name }}</span>{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">What I do</span>
+        <h2 class="section-title">Full stack, without the hand-offs.</h2>
+        <p class="section-sub">One developer across the whole build — from the data model and API to the interface people actually use.</p>
+      </div>
+    </div>
+    <div class="service-grid">
+      <article class="service-card reveal">
+        <div class="service-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="m8 9-4 3 4 3m8-6 4 3-4 3M13.5 5l-3 14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Product engineering</h3>
+        <p>Complete web applications with clean architecture, sensible boundaries, and code that stays maintainable after launch.</p>
+      </article>
+      <article class="service-card reveal" style="--reveal-delay: 90ms">
+        <div class="service-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="5.5" rx="8" ry="3" stroke="currentColor" stroke-width="1.7"/><path d="M4 5.5v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6M4 11.5v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6" stroke="currentColor" stroke-width="1.7"/></svg>
+        </div>
+        <h3>APIs &amp; data</h3>
+        <p>Well-shaped endpoints, efficient queries, and database design that makes the rest of the product easier to build.</p>
+      </article>
+      <article class="service-card reveal" style="--reveal-delay: 180ms">
+        <div class="service-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.7"/><path d="M3 9h18M7 21h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Interface &amp; experience</h3>
+        <p>Responsive, accessible interfaces with the small interaction details that make a product feel considered and fast.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+{% if skills %}
+<section class="section section--soft">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Toolkit</span>
+        <h2 class="section-title">The stack behind the work.</h2>
+        <p class="section-sub">A practical toolkit built around shipping, learning, and keeping things simple.</p>
+      </div>
+    </div>
+
+    <div class="skills-grid">
+      <div class="reveal">
+        <h3 class="mini-title">Core strengths</h3>
+        <div class="key-skills">
+          {% if key_skills %}
+            {% for sk in key_skills %}
+            <div class="key-skill">
               {% if sk.image %}
-              <div class="ksIconCol">
-                <img src="{{sk.image.url}}" alt="...">
-              </div>
+              <img src="{{ sk.image.url }}" alt="" aria-hidden="true">
+              {% else %}
+              <span class="key-skill-mark" aria-hidden="true">{{ sk.name|first|upper }}</span>
               {% endif %}
-              <span class="ksText">{{sk.name}}</span>
+              <span>{{ sk.name }}</span>
             </div>
-            {% endif %}
             {% endfor %}
-          </div>
-        </div>
-        <div class="col-md">
-          <h4 class="smTitle pb-3">Coding Skills</h4>
-          <div class="progressCol">
-            <div class="progressCard">
-              {% for sk in me.userprofile.skills.all %}
-              {% if not sk.is_key_skill %}
-              <div class="progressCol">
-                <span class="progressLbl">{{sk.name}}</span>
-                <div class="row g-2 align-items-center">
-                  <div class="col">
-                    <div class="progress progressStyle">
-                      <div class="progress-bar" role="progressbar" style="width: {{sk.score}}%" aria-valuenow="{{sk.score}}" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                  </div>
-                  <div class="col-auto">
-                    <span class="pLbl">{{sk.score}}%</span>
-                  </div>
-                </div>
-              </div>
+          {% else %}
+            {% for sk in skills|slice:":4" %}
+            <div class="key-skill">
+              {% if sk.image %}
+              <img src="{{ sk.image.url }}" alt="" aria-hidden="true">
+              {% else %}
+              <span class="key-skill-mark" aria-hidden="true">{{ sk.name|first|upper }}</span>
               {% endif %}
-              {% endfor %}
-              
+              <span>{{ sk.name }}</span>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="sectionSpaceSm lightBg">
-    <div class="container">
-      <div class="row pb-3">
-        <div class="col">
-          <h4 class="smText regular">Certificates</h4>
-        </div>
-
-      </div>
-      <div class="sliderOuter">
-        <div class="swiper certificatesSlider">
-          <div class="swiper-wrapper">
-            {% for c in certificates %}
-            {% if c.is_active %}
-            <div class="swiper-slide">
-              <div class="cardStyle1">
-                <h4 class="mdTitle cs1Title">
-                  <a href="javascript:void(0)">{{c.title}}</a>
-                </h4>
-                <ul class="cardOptionCol">
-                  <li>{{c.date.date}}</li>
-                  <li>{{c.name|title}}</li>
-                </ul>
-                <p>{{c.description}}</p>
-              </div>
-            </div>
-            {% endif %}
             {% endfor %}
-            
-          </div>
-        </div>            
-        <div class="cert-swiper-button-next swiper-button-next swiperBtnStyle"></div>
-        <div class="cert-swiper-button-prev swiper-button-prev swiperBtnStyle"></div>
-        <div class="swiper-pagination swiperPaginationStyle posInitial"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="sectionSpace">
-    <div class="container">
-      <div class="portfolioCol">
-        <div class="row pb-3">
-          <div class="col">
-            <h4 class="smText regular">Featured Work</h4>
-          </div>
-          <div class="col-auto">
-            <a href="{% url 'main:portfolios' %}" class="simpleLink">View all</a>
-          </div>
+          {% endif %}
         </div>
-        {% for p in portfolio %}
-        {% if p.is_active %}
-        <div class="portfolioCard">
-          <div class="row g-4 align-items-center">
-            <div class="col-md-auto">
-              <div class="portfolioImgCol">
-                <a href="{% url 'main:portfolio' slug=p.slug %}"><img src="{{p.image.url}}" alt="..."></a>
-              </div>
-            </div>
-            <div class="col-md">
-              <div class="portfolioContentCol">
-                <h4 class="lgTitle"><a href="{% url 'main:portfolio' slug=p.slug %}">{{p.name}}</a></h4>
-                <ul class="portfolioOption">
-                  <li><span class="dateLbl">{{p.date.year}}</span></li>
-                </ul>
-                <p>{{p.description}}</p>
-              </div>
-            </div>
+      </div>
+
+      <div class="skill-panel reveal" style="--reveal-delay: 120ms">
+        <h3 class="mini-title">Working proficiency</h3>
+        {% for sk in skills %}
+        {% if not sk.is_key_skill %}
+        <div class="skill-row">
+          <div class="skill-row-top">
+            <span>{{ sk.name }}</span>
+            <span>{{ sk.score }}%</span>
+          </div>
+          <div class="skill-track" role="progressbar" aria-label="{{ sk.name }}" aria-valuenow="{{ sk.score }}" aria-valuemin="0" aria-valuemax="100">
+            <span class="skill-fill" style="--value: {{ sk.score }}%"></span>
           </div>
         </div>
         {% endif %}
         {% endfor %}
-        
-      </div>
-      <div class="testimonialCol">
-        <h4 class="smText regular d-block">Testimonials</h4>
-        <div class="testimonialSlider">
-          <div class="swiper testimonialSwiper">
-            <div class="swiper-wrapper">
-              {% for t in testimonials %}
-              {% if t.is_active %}
-              <div class="swiper-slide">
-                <div class="testimonialCard">
-                  <div class="row align-items-center">
-                    <div class="col-sm-auto">
-                      <div class="tImgCol">
-                        <img src="{{t.thumbnail.url}}" alt="...">
-                      </div>
-                    </div>
-                    <div class="col-sm">
-                      <div class="tContentCol">
-                        <h4 class="xsTitle bold">{{t.name}} - {{t.role}}</h4>
-                        <p>{{t.quote}}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {% endif %}
-              {% endfor %}
-
-            </div>
-            <div class="test-swiper-button-next swiper-button-next swiperBtnStyle"></div>
-            <div class="test-swiper-button-prev swiper-button-prev swiperBtnStyle"></div>
-          </div>
-
-
-        </div>
       </div>
     </div>
   </div>
 </section>
+{% endif %}
 
-<section>
-  <div class="sectionSpaceSm lightBg">
-    <div class="container">
-      <div class="row pb-3">
-        <div class="col">
-          <h4 class="smText regular">Recent posts</h4>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Selected work</span>
+        <h2 class="section-title">Projects built to solve real problems.</h2>
+        <p class="section-sub">A few recent builds. Each one covers the full journey: planning, data, backend, frontend, and launch.</p>
+      </div>
+      <a class="text-link" href="{% url 'main:portfolios' %}">
+        All projects
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    {% if featured_portfolio %}
+    <div class="project-grid">
+      {% for p in featured_portfolio %}
+      <article class="project-card reveal" style="--reveal-delay: {{ forloop.counter0 }}00ms">
+        <a class="project-media" href="{{ p.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+          {% if p.image %}
+          <img src="{{ p.image.url }}" alt="" loading="lazy">
+          {% else %}
+          <span class="project-placeholder"><span>{{ p.name|default:"Project"|slice:":2" }}</span></span>
+          {% endif %}
+          {% if p.date %}<span class="project-year">{{ p.date|date:"Y" }}</span>{% endif %}
+        </a>
+        <div class="project-body">
+          <span class="project-kicker">Case study</span>
+          <h3><a href="{{ p.get_absolute_url }}">{{ p.name|default:"Untitled project" }}</a></h3>
+          <p class="project-description">{{ p.description|default:"A full stack build focused on clean architecture and a considered user experience."|truncatechars:150 }}</p>
+          {% if p.technology_list %}
+          <ul class="tech-list" aria-label="Technologies used">
+            {% for tech in p.technology_list %}<li>{{ tech }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+          <div class="project-links">
+            <a class="project-link" href="{{ p.get_absolute_url }}">
+              Read case study
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            {% if p.live_url %}<a class="project-link project-link--muted" href="{{ p.live_url }}" target="_blank" rel="noopener noreferrer">Live demo</a>{% endif %}
+            {% if p.repository_url %}<a class="project-link project-link--muted" href="{{ p.repository_url }}" target="_blank" rel="noopener noreferrer">Source</a>{% endif %}
+          </div>
         </div>
-        <div class="col-auto">
-          <a href="{% url 'main:blogs' %}" class="simpleLink">View all</a>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <span class="empty-state-mark" aria-hidden="true">&lt;/&gt;</span>
+      <h3>Projects are being updated</h3>
+      <p>New case studies are on the way. In the meantime, take a look at the journal or get in touch.</p>
+      <a class="btn btn-outline btn-sm" href="{% url 'main:contact' %}">Get in touch</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% if certificates %}
+<section class="section section--soft">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Credentials</span>
+        <h2 class="section-title">Always learning in public.</h2>
+      </div>
+    </div>
+    <div class="slider-outer">
+      <div class="swiper certificatesSlider">
+        <div class="swiper-wrapper">
+          {% for c in certificates %}
+          <div class="swiper-slide">
+            <article class="certificate-card">
+              {% if c.date %}<span class="certificate-date">{{ c.date|date:"M Y" }}</span>{% endif %}
+              <h3>{{ c.title|default:c.name|default:"Certificate" }}</h3>
+              <p class="certificate-issuer">{{ c.name|default:"Certification" }}</p>
+              <p>{{ c.description }}</p>
+            </article>
+          </div>
+          {% endfor %}
         </div>
       </div>
-      <div class="row g-3">
+      <div class="cert-swiper-button-next swiper-button-next swiper-btn"></div>
+      <div class="cert-swiper-button-prev swiper-button-prev swiper-btn"></div>
+      <div class="swiper-pagination swiper-pagination--inline"></div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if testimonials %}
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Kind words</span>
+        <h2 class="section-title">What collaborators say.</h2>
+      </div>
+    </div>
+    <div class="testimonial-slider">
+      <div class="swiper testimonialSwiper">
+        <div class="swiper-wrapper">
+          {% for t in testimonials %}
+          <div class="swiper-slide">
+            <figure class="testimonial-card">
+              <div class="testimonial-top">
+                <div class="testimonial-avatar">
+                  {% if t.thumbnail %}
+                  <img src="{{ t.thumbnail.url }}" alt="">
+                  {% else %}
+                  <span>{{ t.name|default:"?"|first|upper }}</span>
+                  {% endif %}
+                </div>
+                <figcaption>
+                  <strong>{{ t.name|default:"Anonymous" }}</strong>
+                  <span>{{ t.role }}</span>
+                </figcaption>
+              </div>
+              <blockquote>&ldquo;{{ t.quote }}&rdquo;</blockquote>
+            </figure>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="test-swiper-button-next swiper-button-next swiper-btn"></div>
+        <div class="test-swiper-button-prev swiper-button-prev swiper-btn"></div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if blogs %}
+<section class="section section--soft">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Journal</span>
+        <h2 class="section-title">Notes from the build.</h2>
+      </div>
+      <a class="text-link" href="{% url 'main:blogs' %}">
+        All posts
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="post-grid">
       {% for b in blogs %}
-      {% if b.is_active %}
-        <div class="col-lg-6">
-          <div class="cardStyle1">
-            <h4 class="mdTitle cs1Title"><a href="{% url 'main:blog' slug=b.slug %}">{{b.name}}</a></h4>
-            <ul class="cardOptionCol">
-              <li>{{b.timestamp.date}}</li>
-              <li>{{b.author}}</li>
-            </ul>
-            <p>{{b.description}}</p>
+      <article class="post-card reveal" style="--reveal-delay: {{ forloop.counter0 }}00ms">
+        <a class="post-media" href="{{ b.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+          {% if b.image %}
+          <img src="{{ b.image.url }}" alt="" loading="lazy">
+          {% else %}
+          <span class="post-placeholder"><span>{{ b.name|default:"Post"|slice:":2" }}</span></span>
+          {% endif %}
+        </a>
+        <div class="post-body">
+          <div class="post-meta">
+            <span>{{ b.timestamp|date:"M j, Y" }}</span>
+            {% if b.author %}<span>{{ b.author }}</span>{% endif %}
           </div>
+          <h3><a href="{{ b.get_absolute_url }}">{{ b.name|default:"Untitled article" }}</a></h3>
+          <p>{{ b.description|default:""|truncatechars:130 }}</p>
+          <a class="text-link text-link--small" href="{{ b.get_absolute_url }}">
+            Read article
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
         </div>
-        {% endif %}
-        {% endfor %}
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 
+<section class="section">
+  <div class="container">
+    <div class="cta-panel reveal">
+      <span class="hero-blob hero-blob--cta" aria-hidden="true"></span>
+      <div>
+        <span class="eyebrow">Next project</span>
+        <h2>Have an idea worth building?</h2>
+        <p>Tell me what you're working on. I'll help you turn it into something fast, reliable, and ready to grow.</p>
+      </div>
+      <div class="cta-actions">
+        <a class="btn btn-primary" href="{% url 'main:contact' %}">Start a conversation</a>
+        {% if me.email %}<a class="btn btn-outline" href="mailto:{{ me.email }}">{{ me.email }}</a>{% endif %}
       </div>
     </div>
   </div>
 </section>
 {% endblock %}
-<!-- ================================
-End Content
-================================= -->

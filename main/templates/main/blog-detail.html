@@ -1,70 +1,90 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-<!-- ================================
-Start SEO blocks
-================================= -->
-{% block title %}{% endblock %}
-{% block decription %}{% endblock %}
-{% block keywords %}{% endblock %}
-<!-- ================================
-END SEO blocks
-================================= -->
+{% block title %}{{ object.name|default:"Article" }} — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
+{% block description %}{{ object.description|default:"A note from the journal."|truncatechars:160 }}{% endblock %}
+{% block og_title %}{{ object.name|default:"Article" }}{% endblock %}
+{% block og_description %}{{ object.description|default:"A note from the journal."|truncatechars:160 }}{% endblock %}
 
-<!-- ================================
-Start CSS blocks
-================================= -->
-{% block extend_header %}{% endblock %}
-<!-- ================================
-END CSS blocks
-================================= -->
-
-<!-- ================================
-Start script blocks
-================================= -->
-{% block extend_footer %}{% endblock %}
-<!-- ================================
-END script blocks
-================================= -->
-
-<!-- ================================
-Start Content
-================================= -->
 {% block content %}
-<section>
-  <div class="innerPageBannerCol">
+<article>
+  <section class="case-hero">
+    <div class="hero-bg" aria-hidden="true">
+      <span class="hero-blob hero-blob--two"></span>
+      <span class="hero-grid"></span>
+    </div>
     <div class="container">
-      <div class="row g-4 g-md-3  align-items-center">
-        <div class="col-md-6">
-          <div class="bannerContent">
-            <h1 class="xlTitle pb-md-3">{{object.name|title}}</h1>
-          </div>
-        </div>
+      <a class="back-link" href="{% url 'main:blogs' %}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m6 6-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        All articles
+      </a>
+      <span class="eyebrow">Journal · {{ object.timestamp|date:"M j, Y" }}</span>
+      <h1>{{ object.name|default:"Untitled article" }}</h1>
+      {% if object.description %}<p class="case-lead">{{ object.description }}</p>{% endif %}
+      <div class="article-meta">
+        {% if object.author %}
+        <span class="article-author">
+          <span class="article-author-mark" aria-hidden="true">{{ object.author|first|upper }}</span>
+          {{ object.author }}
+        </span>
+        {% endif %}
+        <span>{{ object.timestamp|date:"F j, Y" }}</span>
       </div>
-      <div class="row">
-        <div class="col-md-auto">
-          <div class="authorCol">
-            <h4 class="smTitle pb-3">{{object.author|title}}</h4>
-          </div>
-        </div>
-        <div class="col-md">
-          <h4 class="smTitle pb-3">{{object.timestamp.date}}</h4>
-        </div>
+    </div>
+  </section>
+
+  {% if object.image %}
+  <div class="container">
+    <figure class="case-cover reveal">
+      <img src="{{ object.image.url }}" alt="{{ object.name|default:'Article' }} cover image">
+    </figure>
+  </div>
+  {% endif %}
+
+  <section class="case-body">
+    <div class="container container--narrow">
+      <div class="prose">
+        {% if object.body %}
+          {{ object.body|safe }}
+        {% elif object.description %}
+          <p>{{ object.description }}</p>
+        {% else %}
+          <p>This article is still being written. Check back soon.</p>
+        {% endif %}
       </div>
+    </div>
+  </section>
+</article>
+
+{% if related_posts %}
+<section class="section section--soft">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Keep reading</span>
+        <h2 class="section-title">More from the journal.</h2>
+      </div>
+      <a class="text-link" href="{% url 'main:blogs' %}">View all</a>
+    </div>
+    <div class="post-grid">
+      {% for b in related_posts %}
+      <article class="post-card reveal">
+        <a class="post-media" href="{{ b.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+          {% if b.image %}
+          <img src="{{ b.image.url }}" alt="" loading="lazy">
+          {% else %}
+          <span class="post-placeholder"><span>{{ b.name|default:"Post"|slice:":2" }}</span></span>
+          {% endif %}
+        </a>
+        <div class="post-body">
+          <div class="post-meta"><span>{{ b.timestamp|date:"M j, Y" }}</span></div>
+          <h3><a href="{{ b.get_absolute_url }}">{{ b.name|default:"Untitled article" }}</a></h3>
+          <p>{{ b.description|default:""|truncatechars:120 }}</p>
+        </div>
+      </article>
+      {% endfor %}
     </div>
   </div>
 </section>
-
-<section>
-  <div class="sectionSpaceSm">
-    <div class="container">
-      {{object.body|safe}}
-    </div>
-  </div>
-</section>
-
+{% endif %}
 {% endblock %}
-<!-- ================================
-End Content
-================================= -->
-   

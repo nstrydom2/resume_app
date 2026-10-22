@@ -21,13 +21,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '24@ap5avx$hl4vsn#64gw6o7@^!fmx9u=ahwvcnar98o_!fdke'
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "24@ap5avx$hl4vsn#64gw6o7@^!fmx9u=ahwvcnar98o_!fdke",
+)
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("1", "true", "yes")
 
-ALLOWED_HOSTS = ['nickthedev.site']
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get(
+        "DJANGO_ALLOWED_HOSTS", "nickthedev.site,localhost,127.0.0.1"
+    ).split(",")
+    if host.strip()
+]
 RESTRICT_ADMIN = True
 ALLOWED_ADMIN_IPS = ['127.0.0.1', '::1', '104.159.149.103']
 ALLOWED_ADMIN_IP_RANGES = ['127.0.0.0/24', '::/1', '104.159.149.0/24']
@@ -155,6 +164,9 @@ MIDDLEWARE += [
 
 
 # settings.py
+LOG_DIR = BASE_DIR / "logs"
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -169,7 +181,7 @@ LOGGING = {
         "connections_file": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": BASE_DIR / "logs/connections.log",
+            "filename": LOG_DIR / "connections.log",
             "formatter": "connections",
         },
     },

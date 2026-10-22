@@ -1,51 +1,80 @@
 {% load static %}
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="midnight">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+      (function () {
+        if ("IntersectionObserver" in window) {
+          document.documentElement.classList.add("js");
+        }
+        var themes = ["midnight", "aurora", "daylight", "ember", "forest"];
+        var stored = null;
+        try {
+          stored = window.localStorage.getItem("portfolio-theme");
+        } catch (error) {}
+        var prefersLight =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: light)").matches;
+        var theme =
+          stored && themes.indexOf(stored) !== -1
+            ? stored
+            : prefersLight
+            ? "daylight"
+            : "midnight";
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
 
-    <title>{% block title %}NicktheDev.Rocks{%endblock %}</title>
-    <meta name="author" content="Did Coding Limited & James Granger Design">
-    <link rel="canonical" href="{{request.path}}"/>
-    <link rel="home" href="{% url 'main:home' %}"/>
-    <meta name="description" content="{% block description %}{% endblock %}">
-    <meta name="keywords" content="{% block keywords %}{% endblock %}">
+    <title>{% block title %}Nick Strydom — Full Stack Developer{% endblock %}</title>
+    <meta name="author" content="{% firstof me.get_full_name 'Nick Strydom' %}">
+    <meta name="description" content="{% block description %}Full stack developer building fast, reliable web applications with Django, Python and modern JavaScript.{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}full stack developer, django developer, python, javascript, web development{% endblock %}">
+    <meta name="theme-color" content="#070b16" id="metaThemeColor">
 
-    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/logo.png' %}">
-    <link rel="apple-touch-icon" type="image/jpg" href="{% static 'images/logo.png' %}">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <link rel="home" href="{% url 'main:home' %}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% block og_title %}{% firstof me.get_full_name 'Nick Strydom' %} — Full Stack Developer{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Full stack developer building fast, reliable web applications end to end.{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
 
-    <!-- ================================
-    Start CSS
-    ================================= -->
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <link rel="apple-touch-icon" type="image/png" href="{% static 'images/logo.png' %}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/swiper@7.0.5/swiper-bundle.min.css">
     <link href="{% static 'css/style_2.css' %}" rel="stylesheet">
-    {% block extend_header%}{%endblock%}
-    <!-- ================================
-    End CSS
-    ================================= -->
-
+    {% block extend_header %}{% endblock %}
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="scroll-progress" aria-hidden="true">
+      <span id="scrollProgress"></span>
+    </div>
+
     {% include 'main/partials/messages.html' %}
     {% include 'main/partials/nav.html' %}
 
-    {% block content %}
-    {% endblock %}
+    <main id="main-content">
+      {% block content %}{% endblock %}
+    </main>
 
     {% include 'main/partials/footer.html' %}
 
-    <!-- ================================
-    Start Scripts
-    ================================= -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <button class="to-top" id="toTop" type="button" aria-label="Back to top">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script src="https://unpkg.com/swiper@7.0.5/swiper-bundle.min.js"></script>
     <script src="{% static 'js/script.js' %}"></script>
-    {% block extend_footer %}{%endblock%}
-    <!-- ================================
-    End Scripts
-    ================================= -->
+    {% block extend_footer %}{% endblock %}
   </body>
 </html>

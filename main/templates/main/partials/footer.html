@@ -1,25 +1,53 @@
 {% load static %}
-<!-- ================================
-Start Footer
-================================= -->
-<footer>
-    <div class="footerCol">
-    <div class="container">
-        <ul class="socialCol">
-        <li><a href="https://www.facebook.com/nstrydom31"><img src="{% static 'images/fb.svg' %}" alt="..."></a></li>
-        <li><a href="https://www.instagram.com/nstrydom1/"><img src="{% static 'images/insta.svg' %}" alt="..."></a></li>
-        <li><a href="https://twitter.com/nstrydom"><img src="{% static 'images/twitter.svg' %}" alt="..."></a></li>
-        <li><a href="https://www.linkedin.com/in/nicholas-strydom-955951139/"><img src="{% static 'images/linkedin.svg' %}" alt="..."></a></li>
-        <li><a href="https://www.github.com/nstrydom2"><img src="{% static 'images/github-mark.svg' %}" alt="..."></a></li>
-        <li><a href="https://profile.codersrank.io/user/nstrydom2/"><img src="{% static 'images/codersrank-black.svg' %}" alt="..."></a></li>
-        <li><a href="https://www.codecademy.com/profiles/nstrydom"><img src="{% static 'images/codecademy-icon.svg' %}" alt="..."></a></li>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="{% url 'main:home' %}">
+          <span class="brand-mark" aria-hidden="true">&lt;/&gt;</span>
+          <span class="brand-text">
+            <strong>{% firstof me.get_full_name "Nick Strydom" %}</strong>
+            <small>{% firstof me.userprofile.title "Full Stack Developer" %}</small>
+          </span>
+        </a>
+        <p>Designing and building dependable web products, from the first database table to the final interface detail.</p>
+        <ul class="social-links" aria-label="Social profiles">
+          <li><a href="https://www.github.com/nstrydom2" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><img src="{% static 'images/github-mark.svg' %}" alt=""></a></li>
+          <li><a href="https://www.linkedin.com/in/nicholas-strydom-955951139/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><img src="{% static 'images/linkedin.svg' %}" alt=""></a></li>
+          <li><a href="https://twitter.com/nstrydom" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><img src="{% static 'images/twitter.svg' %}" alt=""></a></li>
+          <li><a href="https://www.facebook.com/nstrydom31" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img src="{% static 'images/fb.svg' %}" alt=""></a></li>
+          <li><a href="https://www.instagram.com/nstrydom1/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><img src="{% static 'images/insta.svg' %}" alt=""></a></li>
+          <li><a href="https://profile.codersrank.io/user/nstrydom2/" target="_blank" rel="noopener noreferrer" aria-label="CodersRank"><img src="{% static 'images/codersrank-black.svg' %}" alt=""></a></li>
+          <li><a href="https://www.codecademy.com/profiles/nstrydom" target="_blank" rel="noopener noreferrer" aria-label="Codecademy"><img src="{% static 'images/codecademy-icon.svg' %}" alt=""></a></li>
         </ul>
-        <div class="copyrightCol">
-        <p>Inspired by a <a href="https://jamesgrangerdesign.co.uk/" target="_blank">James Granger Design</a></p>
-        </div>
+      </div>
+
+      <div>
+        <h3 class="footer-title">Explore</h3>
+        <ul class="footer-links">
+          <li><a href="{% url 'main:home' %}">Home</a></li>
+          <li><a href="{% url 'main:portfolios' %}">Projects</a></li>
+          <li><a href="{% url 'main:blogs' %}">Journal</a></li>
+          <li><a href="{% url 'main:contact' %}">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="footer-title">Get in touch</h3>
+        <ul class="footer-links">
+          {% if me.email %}<li><a href="mailto:{{ me.email }}">{{ me.email }}</a></li>{% endif %}
+          <li><a href="https://www.github.com/nstrydom2" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/nicholas-strydom-955951139/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          {% if me.userprofile.cv %}
+          <li><a href="{{ me.userprofile.cv.url }}" download>Download CV</a></li>
+          {% endif %}
+        </ul>
+      </div>
     </div>
+
+    <div class="footer-bottom">
+      <p>&copy; {% now "Y" %} {% firstof me.get_full_name "Nick Strydom" %}. All rights reserved.</p>
+      <p>Built with Django, JavaScript and a lot of care.</p>
     </div>
+  </div>
 </footer>
-<!-- ================================
-End Footer
-================================= -->
