@@ -2,9 +2,9 @@
 {% load static %}
 
 {% block title %}Projects — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
-{% block description %}Selected full stack projects by {% firstof me.get_full_name "Nick Strydom" %} — case studies covering backend architecture, APIs, data and frontend craft.{% endblock %}
+{% block description %}Selected software and automation projects by {% firstof me.get_full_name "Nick Strydom" %} — case studies covering the problem, approach, and limitations.{% endblock %}
 {% block og_title %}Projects — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
-{% block og_description %}Selected full stack projects and case studies.{% endblock %}
+{% block og_description %}Selected software and automation projects, including clearly labelled demonstrations.{% endblock %}
 
 {% block content %}
 <section class="page-hero">
@@ -15,7 +15,7 @@
   <div class="container">
     <span class="eyebrow">Selected work</span>
     <h1>Projects with purpose.</h1>
-    <p>Case studies from the full stack: the problem, the architecture, the trade-offs, and the details that made the product feel right.</p>
+    <p>Selected software and automation work: the problem, the approach, the trade-offs, and the limitations. Demonstration projects are labelled clearly.</p>
   </div>
 </section>
 
@@ -42,9 +42,9 @@
           {% if p.date %}<span class="project-year">{{ p.date|date:"Y" }}</span>{% endif %}
         </a>
         <div class="project-body">
-          <span class="project-kicker">Case study</span>
+          <span class="project-kicker">{% if p.is_demo %}Demonstration{% else %}Case study{% endif %}</span>
           <h2 class="project-title"><a href="{{ p.get_absolute_url }}">{{ p.name|default:"Untitled project" }}</a></h2>
-          <p class="project-description">{{ p.description|default:"A full stack build focused on clean architecture and a considered user experience."|truncatechars:170 }}</p>
+          <p class="project-description">{{ p.description|default:"A software project focused on a clear problem and a practical result."|truncatechars:170 }}</p>
           {% if p.technology_list %}
           <ul class="tech-list" aria-label="Technologies used">
             {% for tech in p.technology_list %}<li>{{ tech }}</li>{% endfor %}
@@ -52,7 +52,7 @@
           {% endif %}
           <div class="project-links">
             <a class="project-link" href="{{ p.get_absolute_url }}">
-              Read case study
+              {% if p.is_demo %}View demonstration{% else %}Read case study{% endif %}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
             {% if p.live_url %}

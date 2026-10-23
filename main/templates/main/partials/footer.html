@@ -10,7 +10,7 @@
             <small>{% firstof me.userprofile.title "Full Stack Developer" %}</small>
           </span>
         </a>
-        <p>Designing and building dependable web products, from the first database table to the final interface detail.</p>
+        <p>Building dependable software and automation for businesses that want to remove repetitive work and connect the systems they already use.</p>
         <ul class="social-links" aria-label="Social profiles">
           <li><a href="https://www.github.com/nstrydom2" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><img src="{% static 'images/github-mark.svg' %}" alt=""></a></li>
           <li><a href="https://www.linkedin.com/in/nicholas-strydom-955951139/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><img src="{% static 'images/linkedin.svg' %}" alt=""></a></li>
@@ -26,6 +26,7 @@
         <h3 class="footer-title">Explore</h3>
         <ul class="footer-links">
           <li><a href="{% url 'main:home' %}">Home</a></li>
+          <li><a href="{% url 'main:services' %}">Services</a></li>
           <li><a href="{% url 'main:portfolios' %}">Projects</a></li>
           <li><a href="{% url 'main:blogs' %}">Journal</a></li>
           <li><a href="{% url 'main:contact' %}">Contact</a></li>

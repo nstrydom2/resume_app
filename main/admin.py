@@ -20,9 +20,37 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 @admin.register(ContactProfile)
 class ContactAdmin(admin.ModelAdmin):
-    list_display = ("id", "timestamp", "name", "email")
-    search_fields = ("name", "email", "message")
+    list_display = ("id", "timestamp", "name", "email", "service", "business_name")
+    list_filter = ("service", "budget_range", "preferred_contact")
+    search_fields = ("name", "email", "business_name", "message", "current_process")
     readonly_fields = ("timestamp",)
+    fieldsets = (
+        (
+            "Contact",
+            {
+                "fields": (
+                    "timestamp",
+                    "name",
+                    "email",
+                    "business_name",
+                    "preferred_contact",
+                )
+            },
+        ),
+        (
+            "Inquiry",
+            {
+                "fields": (
+                    "service",
+                    "message",
+                    "current_process",
+                    "volume_frequency",
+                    "desired_deadline",
+                    "budget_range",
+                )
+            },
+        ),
+    )
 
 
 @admin.register(Testimonial)
@@ -39,8 +67,8 @@ class MediaAdmin(admin.ModelAdmin):
 
 @admin.register(Portfolio)
 class PortfolioAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "date", "is_featured", "is_active")
-    list_filter = ("is_active", "is_featured")
+    list_display = ("id", "name", "date", "is_featured", "is_demo", "is_active")
+    list_filter = ("is_active", "is_featured", "is_demo")
     search_fields = ("name", "description", "technologies")
     readonly_fields = ("slug",)
     fieldsets = (
@@ -53,6 +81,7 @@ class PortfolioAdmin(admin.ModelAdmin):
                     "live_url",
                     "repository_url",
                     "is_featured",
+                    "is_demo",
                     "is_active",
                 )
             },

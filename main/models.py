@@ -4,6 +4,8 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from ckeditor.fields import RichTextField
 
+from .services import BUDGET_CHOICES, CONTACT_METHOD_CHOICES, CONTACT_SERVICE_CHOICES
+
 
 def _unique_slug(instance, value):
     base = slugify(value or "")[:45] or "item"
@@ -58,7 +60,23 @@ class ContactProfile(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     name = models.CharField(verbose_name="Name",max_length=100)
     email = models.EmailField(verbose_name="Email")
-    message = models.TextField(verbose_name="Message")
+    business_name = models.CharField(max_length=200, blank=True)
+    service = models.CharField(
+        max_length=50,
+        choices=CONTACT_SERVICE_CHOICES,
+        default="other",
+        verbose_name="Service required",
+    )
+    message = models.TextField(verbose_name="Description of the problem")
+    current_process = models.CharField(max_length=500, blank=True)
+    volume_frequency = models.CharField(max_length=200, blank=True)
+    desired_deadline = models.CharField(max_length=120, blank=True)
+    budget_range = models.CharField(
+        max_length=50, choices=BUDGET_CHOICES, blank=True
+    )
+    preferred_contact = models.CharField(
+        max_length=20, choices=CONTACT_METHOD_CHOICES, blank=True
+    )
 
     def __str__(self):
         return f'{self.name}'
@@ -115,6 +133,10 @@ class Portfolio(models.Model):
     slug = models.SlugField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
+    is_demo = models.BooleanField(
+        default=False,
+        help_text="Marks a self-built demonstration rather than client work.",
+    )
     technologies = models.CharField(
         max_length=300,
         blank=True,

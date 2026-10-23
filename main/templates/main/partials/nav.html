@@ -20,6 +20,7 @@
         {% with url_name=request.resolver_match.url_name %}
         <ul class="nav-links">
           <li><a href="{% url 'main:home' %}" class="{% if url_name == 'home' %}is-active{% endif %}"{% if url_name == 'home' %} aria-current="page"{% endif %}>Home</a></li>
+          <li><a href="{% url 'main:services' %}" class="{% if url_name == 'services' or url_name == 'service' %}is-active{% endif %}"{% if url_name == 'services' or url_name == 'service' %} aria-current="page"{% endif %}>Services</a></li>
           <li><a href="{% url 'main:portfolios' %}" class="{% if url_name == 'portfolios' or url_name == 'portfolio' %}is-active{% endif %}"{% if url_name == 'portfolios' or url_name == 'portfolio' %} aria-current="page"{% endif %}>Projects</a></li>
           <li><a href="{% url 'main:blogs' %}" class="{% if url_name == 'blogs' or url_name == 'blog' %}is-active{% endif %}"{% if url_name == 'blogs' or url_name == 'blog' %} aria-current="page"{% endif %}>Journal</a></li>
           <li><a href="{% url 'main:contact' %}" class="{% if url_name == 'contact' %}is-active{% endif %}"{% if url_name == 'contact' %} aria-current="page"{% endif %}>Contact</a></li>
@@ -64,7 +65,7 @@
           </div>
 
           <a class="btn btn-primary btn-sm header-cta" href="{% url 'main:contact' %}">
-            Let's talk
+            Discuss a project
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>

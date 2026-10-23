@@ -2,9 +2,9 @@
 {% load static %}
 
 {% block title %}{{ object.name|default:"Project" }} — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
-{% block description %}{{ object.description|default:"A full stack project case study."|truncatechars:160 }}{% endblock %}
-{% block og_title %}{{ object.name|default:"Project" }} — Case study{% endblock %}
-{% block og_description %}{{ object.description|default:"A full stack project case study."|truncatechars:160 }}{% endblock %}
+{% block description %}{{ object.description|default:"A software project case study."|truncatechars:160 }}{% endblock %}
+{% block og_title %}{{ object.name|default:"Project" }} — {% if object.is_demo %}Demonstration{% else %}Case study{% endif %}{% endblock %}
+{% block og_description %}{{ object.description|default:"A software project case study."|truncatechars:160 }}{% endblock %}
 
 {% block content %}
 <section class="case-hero">
@@ -17,7 +17,7 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m6 6-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       All projects
     </a>
-    <span class="eyebrow">Case study{% if object.date %} · {{ object.date|date:"Y" }}{% endif %}</span>
+    <span class="eyebrow">{% if object.is_demo %}Demonstration project{% else %}Case study{% endif %}{% if object.date %} · {{ object.date|date:"Y" }}{% endif %}</span>
     <h1>{{ object.name|default:"Untitled project" }}</h1>
     {% if object.description %}<p class="case-lead">{{ object.description }}</p>{% endif %}
 
@@ -37,6 +37,12 @@
     </div>
   </div>
 </section>
+
+{% if object.is_demo %}
+<div class="container">
+  <p class="demo-disclaimer">This is a self-built demonstration project. It shows the approach and output; it is not client work and does not claim client results.</p>
+</div>
+{% endif %}
 
 {% if object.image %}
 <div class="container">
@@ -79,7 +85,7 @@
             {% endif %}
             <div>
               <span class="fact-label">Project type</span>
-              <span>Full stack web application</span>
+              <span>{% if object.is_demo %}Self-built demonstration{% else %}Software project{% endif %}</span>
             </div>
           </div>
 
@@ -122,11 +128,11 @@
           {% endif %}
         </a>
         <div class="project-body">
-          <span class="project-kicker">Case study</span>
+          <span class="project-kicker">{% if p.is_demo %}Demonstration{% else %}Case study{% endif %}</span>
           <h3><a href="{{ p.get_absolute_url }}">{{ p.name|default:"Untitled project" }}</a></h3>
           <p class="project-description">{{ p.description|default:""|truncatechars:120 }}</p>
           <div class="project-links">
-            <a class="project-link" href="{{ p.get_absolute_url }}">Read case study</a>
+            <a class="project-link" href="{{ p.get_absolute_url }}">{% if p.is_demo %}View demonstration{% else %}Read case study{% endif %}</a>
           </div>
         </div>
       </article>

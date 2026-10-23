@@ -1,10 +1,18 @@
 from django.contrib import messages
 from django.db.models import F
+from django.http import Http404
 from django.urls import reverse_lazy
 from django.views import generic
 
 from .forms import ContactForm
 from .models import Blog, Certificate, Portfolio, Testimonial, UserProfile
+from .services import (
+    CONTACT_SERVICE_CHOICES,
+    DEFAULT_PROCESS,
+    SERVICE_GROUPS,
+    get_priority_services,
+    get_service,
+)
 
 
 def _project_ordering(queryset):
@@ -56,6 +64,56 @@ class IndexView(generic.TemplateView):
                 "skill_count": len(skills),
                 "certificate_count": certificates.count(),
                 "article_count": blogs.count(),
+                "priority_services": get_priority_services(),
+            }
+        )
+        return context
+
+
+class ServicesView(generic.TemplateView):
+    template_name = "main/services.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            {
+                "service_groups": SERVICE_GROUPS,
+                "priority_services": get_priority_services(),
+                "process_steps": DEFAULT_PROCESS,
+            }
+        )
+        return context
+
+
+class ServiceDetailView(generic.TemplateView):
+    template_name = "main/service-detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        service = get_service(self.kwargs["slug"])
+        if not service:
+            raise Http404("Service not found")
+
+        projects = Portfolio.objects.filter(
+            is_active=True, slug__in=service.get("related_projects", [])
+        )
+        project_map = {project.slug: project for project in projects}
+        related_projects = [
+            project_map[slug]
+            for slug in service.get("related_projects", [])
+            if slug in project_map
+        ]
+
+        context.update(
+            {
+                "service": service,
+                "process_steps": DEFAULT_PROCESS,
+                "related_projects": related_projects,
+                "other_services": [
+                    item
+                    for item in get_priority_services()
+                    if item["slug"] != service["slug"]
+                ],
             }
         )
         return context
@@ -66,10 +124,27 @@ class ContactView(generic.FormView):
     form_class = ContactForm
     success_url = reverse_lazy("main:home")
 
+    def get_initial(self):
+        initial = super().get_initial()
+        requested_service = self.request.GET.get("service", "")
+        if requested_service in dict(CONTACT_SERVICE_CHOICES):
+            initial["service"] = requested_service
+        return initial
+
     def form_valid(self, form):
         form.save()
-        messages.success(self.request, "Thank you. I will be in touch soon.")
+        messages.success(
+            self.request,
+            "Thank you. Your inquiry has been received and I will be in touch soon.",
+        )
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            "Please check the highlighted fields and try again.",
+        )
+        return super().form_invalid(form)
 
 
 class PortfolioView(generic.ListView):

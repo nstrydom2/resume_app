@@ -1,10 +1,10 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}Contact — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
-{% block description %}Start a conversation about a new project, an existing codebase, or a full stack build.{% endblock %}
-{% block og_title %}Contact — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
-{% block og_description %}Start a conversation about a new project or an existing codebase.{% endblock %}
+{% block title %}Discuss a Project — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
+{% block description %}Tell me about the repetitive process, data problem, integration, or software project you need help with.{% endblock %}
+{% block og_title %}Discuss a Project — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
+{% block og_description %}Share the problem, the tools involved, and the outcome you need. I will reply with a practical next step.{% endblock %}
 
 {% block content %}
 <section class="page-hero">
@@ -13,9 +13,9 @@
     <span class="hero-grid"></span>
   </div>
   <div class="container">
-    <span class="eyebrow">Contact</span>
-    <h1>Let's build something good.</h1>
-    <p>Tell me a little about what you're working on. Whether it's a new product or an existing codebase that needs a hand, I'd like to hear about it.</p>
+    <span class="eyebrow">Start a conversation</span>
+    <h1>Tell me what is slowing you down.</h1>
+    <p>Share the current process, the systems involved, and the outcome you need. I will reply with whether I can help, what information is missing, and what a sensible first scope looks like.</p>
   </div>
 </section>
 
@@ -24,8 +24,30 @@
     <div class="contact-grid">
       <aside class="contact-info">
         <div class="contact-card">
-          <h2>Start a conversation</h2>
-          <p>Share the idea, the constraints, and where you are in the process. I'll reply as soon as I can.</p>
+          <h2>What happens next</h2>
+          <ol class="contact-steps">
+            <li>
+              <span class="contact-step-number">01</span>
+              <div>
+                <strong>I review the inquiry</strong>
+                <p>I look at the problem, the tools involved, and whether the request is a good fit.</p>
+              </div>
+            </li>
+            <li>
+              <span class="contact-step-number">02</span>
+              <div>
+                <strong>We clarify the scope</strong>
+                <p>If needed, we arrange a short call and review a sample input or existing system.</p>
+              </div>
+            </li>
+            <li>
+              <span class="contact-step-number">03</span>
+              <div>
+                <strong>You get a clear next step</strong>
+                <p>That may be a fixed-scope quote, a diagnostic plan, or a recommendation that I am not the right fit.</p>
+              </div>
+            </li>
+          </ol>
 
           <ul class="contact-list">
             {% if me.email %}
@@ -58,35 +80,90 @@
       </aside>
 
       <div class="contact-form-wrap">
+        <h2 class="form-title">Project inquiry</h2>
+        <p class="form-intro">Fields marked with <span aria-hidden="true">*</span> are required. The more context you provide, the more useful the first reply will be.</p>
+
         <form class="contact-form" method="post" action="{% url 'main:contact' %}">
           {% csrf_token %}
+          {{ form.form_token }}
+          <div class="hp-wrap" aria-hidden="true">{{ form.company_website }}</div>
+
           {% if form.non_field_errors %}
           <div class="form-alert">{{ form.non_field_errors }}</div>
           {% endif %}
-
-          <div class="field">
-            <label for="{{ form.name.id_for_label }}">Your name <span aria-hidden="true">*</span></label>
-            {{ form.name }}
-            {% for error in form.name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          {% if form.form_token.errors %}
+          <div class="form-alert">
+            {% for error in form.form_token.errors %}{{ error }}{% endfor %}
           </div>
+          {% endif %}
 
-          <div class="field">
-            <label for="{{ form.email.id_for_label }}">Email address <span aria-hidden="true">*</span></label>
-            {{ form.email }}
-            {% for error in form.email.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
-          </div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="{{ form.name.id_for_label }}">Your name <span aria-hidden="true">*</span></label>
+              {{ form.name }}
+              {% for error in form.name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
 
-          <div class="field">
-            <label for="{{ form.message.id_for_label }}">What are you working on? <span aria-hidden="true">*</span></label>
-            {{ form.message }}
-            {% for error in form.message.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            <div class="field">
+              <label for="{{ form.email.id_for_label }}">Email address <span aria-hidden="true">*</span></label>
+              {{ form.email }}
+              {% for error in form.email.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.business_name.id_for_label }}">Business name <span class="optional">(optional)</span></label>
+              {{ form.business_name }}
+              {% for error in form.business_name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.service.id_for_label }}">What do you need help with? <span aria-hidden="true">*</span></label>
+              {{ form.service }}
+              {% for error in form.service.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="field field--full">
+              <label for="{{ form.message.id_for_label }}">Description of the problem <span aria-hidden="true">*</span></label>
+              {{ form.message }}
+              {% for error in form.message.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="field field--full">
+              <label for="{{ form.current_process.id_for_label }}">Current process or tools <span class="optional">(optional)</span></label>
+              {{ form.current_process }}
+              {% for error in form.current_process.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.volume_frequency.id_for_label }}">Volume or frequency <span class="optional">(optional)</span></label>
+              {{ form.volume_frequency }}
+              {% for error in form.volume_frequency.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.desired_deadline.id_for_label }}">Desired deadline <span class="optional">(optional)</span></label>
+              {{ form.desired_deadline }}
+              {% for error in form.desired_deadline.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.budget_range.id_for_label }}">Budget range <span class="optional">(optional)</span></label>
+              {{ form.budget_range }}
+              {% for error in form.budget_range.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="field">
+              <label for="{{ form.preferred_contact.id_for_label }}">Preferred contact method <span class="optional">(optional)</span></label>
+              {{ form.preferred_contact }}
+              {% for error in form.preferred_contact.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
           </div>
 
           <button class="btn btn-primary" type="submit">
-            Send message
+            Send inquiry
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 12 16-8-5.5 16L11 14l-7-2Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
-          <p class="form-note">Your details are only used to reply to this message.</p>
+          <p class="form-note">Your inquiry is stored in this site's database and used only to assess and respond. It is not shared or added to a mailing list. Please do not send passwords, API keys, or sensitive documents through this form.</p>
         </form>
       </div>
     </div>

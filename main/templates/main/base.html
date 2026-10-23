@@ -27,16 +27,16 @@
       })();
     </script>
 
-    <title>{% block title %}Nick Strydom — Full Stack Developer{% endblock %}</title>
+    <title>{% block title %}Nick Strydom — Software &amp; Automation{% endblock %}</title>
     <meta name="author" content="{% firstof me.get_full_name 'Nick Strydom' %}">
     <meta name="description" content="{% block description %}Full stack developer building fast, reliable web applications with Django, Python and modern JavaScript.{% endblock %}">
-    <meta name="keywords" content="{% block keywords %}full stack developer, django developer, python, javascript, web development{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}software developer, automation, python, django, api integration, data processing{% endblock %}">
     <meta name="theme-color" content="#070b16" id="metaThemeColor">
 
     <link rel="canonical" href="{{ request.build_absolute_uri }}">
     <link rel="home" href="{% url 'main:home' %}">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="{% block og_title %}{% firstof me.get_full_name 'Nick Strydom' %} — Full Stack Developer{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}{% firstof me.get_full_name 'Nick Strydom' %} — Software &amp; Automation{% endblock %}">
     <meta property="og:description" content="{% block og_description %}Full stack developer building fast, reliable web applications end to end.{% endblock %}">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
 
