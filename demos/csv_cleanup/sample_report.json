@@ -1,0 +1,16 @@
+{
+  "input_rows": 4,
+  "output_rows": 2,
+  "blank_rows_removed": 1,
+  "duplicate_rows_removed": 1,
+  "empty_columns_removed": 1,
+  "dropped_columns": [
+    "unused"
+  ],
+  "columns": [
+    "name",
+    "email",
+    "phone",
+    "notes"
+  ]
+}

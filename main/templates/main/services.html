@@ -1,0 +1,152 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Services — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
+{% block description %}Software development, data automation, API integration, and technical consulting for businesses that need to remove repetitive work.{% endblock %}
+{% block og_title %}Services — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
+{% block og_description %}Practical software and automation for repetitive office work, document processing, data cleanup, and system integration.{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="hero-bg" aria-hidden="true">
+    <span class="hero-blob hero-blob--one"></span>
+    <span class="hero-blob hero-blob--two"></span>
+    <span class="hero-grid"></span>
+  </div>
+  <div class="container">
+    <span class="eyebrow">Services</span>
+    <h1>Practical software for the work that slows you down.</h1>
+    <p>Start with a repetitive process, a messy dataset, or a system that will not talk to another system. I will help you turn it into something clearer, faster, and easier to run.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="{% url 'main:contact' %}">
+        Discuss a project
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a class="btn btn-outline" href="#catalog">Browse the catalog</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section--topless">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Start here</span>
+        <h2 class="section-title">Four offers built around common business problems.</h2>
+        <p class="section-sub">These are the best entry points if you are not sure which service you need. Each one starts with a sample input and a clear definition of the output.</p>
+      </div>
+    </div>
+
+    <div class="service-grid service-grid--four">
+      {% for service in priority_services %}
+      <article class="service-card reveal" style="--reveal-delay: {{ forloop.counter0 }}00ms">
+        <div class="service-icon">
+          {% include 'main/partials/service-icon.html' with icon=service.icon %}
+        </div>
+        <h3>{{ service.name }}</h3>
+        <p>{{ service.tagline }}</p>
+        <div class="service-card-actions">
+          <a class="text-link text-link--small" href="{% url 'main:service' slug=service.slug %}">
+            View service
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="text-link text-link--small" href="{% url 'main:contact' %}?service={{ service.slug }}">Request a quote</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--soft" id="catalog">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Full catalog</span>
+        <h2 class="section-title">Five groups of work I can take on.</h2>
+        <p class="section-sub">The catalog is intentionally broad. The first conversation is about narrowing it to one problem worth solving.</p>
+      </div>
+    </div>
+
+    <div class="service-group-grid">
+      {% for group in service_groups %}
+      <article class="service-group reveal" style="--reveal-delay: {{ forloop.counter0 }}00ms">
+        <div class="service-group-head">
+          <div class="service-icon">
+            {% include 'main/partials/service-icon.html' with icon=group.icon %}
+          </div>
+          <div>
+            <span class="service-group-eyebrow">{{ group.eyebrow }}</span>
+            <h3>{{ group.title }}</h3>
+          </div>
+        </div>
+        <p class="service-group-description">{{ group.description }}</p>
+        <ul class="service-group-list">
+          {% for item in group.items %}
+          <li>
+            {% if item.detail %}
+            <a href="{% url 'main:service' slug=item.detail %}">{{ item.name }}</a>
+            {% else %}
+            <a href="{% url 'main:contact' %}?service={{ item.service }}">{{ item.name }}</a>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        <a class="btn btn-outline btn-sm service-group-cta" href="{% url 'main:contact' %}?service={{ group.cta_service }}">Discuss this work</a>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">How it works</span>
+        <h2 class="section-title">Assess, agree, build, test, deliver.</h2>
+        <p class="section-sub">No mystery process and no open-ended retainer unless we explicitly agree to one.</p>
+      </div>
+    </div>
+
+    <ol class="process-list">
+      {% for title, description in process_steps %}
+      <li class="process-step reveal" style="--reveal-delay: {{ forloop.counter0 }}00ms">
+        <span class="process-number">{{ forloop.counter|stringformat:"02d" }}</span>
+        <div>
+          <h3>{{ title }}</h3>
+          <p>{{ description }}</p>
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+
+    <div class="scope-panel reveal">
+      <h3>Scope and limits</h3>
+      <ul class="scope-list">
+        <li>Web data work is limited to data you are permitted to collect, with respect for terms, access controls, privacy, and rate limits.</li>
+        <li>AI and extraction workflows include human review where accuracy matters; they are not presented as perfect automation.</li>
+        <li>Embedded work covers software, diagnostics, and test tooling, not board-level repair or safety-critical certification.</li>
+        <li>I do not invent client results, testimonials, or performance claims. Demonstration work is labelled as such.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section section--topless">
+  <div class="container">
+    <div class="cta-panel reveal">
+      <span class="hero-blob hero-blob--cta" aria-hidden="true"></span>
+      <div>
+        <span class="eyebrow">Next step</span>
+        <h2>Not sure which service fits?</h2>
+        <p>Describe the current process and the outcome you need. I will tell you what is practical, what is not, and what a sensible first scope looks like.</p>
+      </div>
+      <div class="cta-actions">
+        <a class="btn btn-primary" href="{% url 'main:contact' %}">Discuss a project</a>
+        {% if me.email %}<a class="btn btn-outline" href="mailto:{{ me.email }}">{{ me.email }}</a>{% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

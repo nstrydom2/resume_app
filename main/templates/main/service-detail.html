@@ -1,0 +1,138 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ service.meta_title }} — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
+{% block description %}{{ service.meta_description }}{% endblock %}
+{% block og_title %}{{ service.meta_title }} — {% firstof me.get_full_name "Nick Strydom" %}{% endblock %}
+{% block og_description %}{{ service.meta_description }}{% endblock %}
+
+{% block content %}
+<section class="case-hero">
+  <div class="hero-bg" aria-hidden="true">
+    <span class="hero-blob hero-blob--two"></span>
+    <span class="hero-grid"></span>
+  </div>
+  <div class="container">
+    <a class="back-link" href="{% url 'main:services' %}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m6 6-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      All services
+    </a>
+    <span class="eyebrow">{{ service.eyebrow }}</span>
+    <h1>{{ service.name }}</h1>
+    <p class="case-lead">{{ service.tagline }}</p>
+    <div class="case-actions">
+      <a class="btn btn-primary" href="{% url 'main:contact' %}?service={{ service.slug }}">
+        Request a quote
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a class="btn btn-outline" href="{% url 'main:services' %}">Compare services</a>
+    </div>
+  </div>
+</section>
+
+<section class="case-body">
+  <div class="container">
+    <div class="case-layout">
+      <article class="prose service-prose">
+        <h2>The problem</h2>
+        <p>{{ service.problem }}</p>
+
+        <h2>Common examples</h2>
+        <ul class="check-list">
+          {% for example in service.examples %}<li>{{ example }}</li>{% endfor %}
+        </ul>
+
+        <h2>What you receive</h2>
+        <ul class="check-list">
+          {% for deliverable in service.deliverables %}<li>{{ deliverable }}</li>{% endfor %}
+        </ul>
+
+        <h2>What I need from you</h2>
+        <ul class="check-list">
+          {% for item in service.inputs %}<li>{{ item }}</li>{% endfor %}
+        </ul>
+
+        <h2>Scope and limits</h2>
+        <ul class="check-list check-list--limits">
+          {% for item in service.limitations %}<li>{{ item }}</li>{% endfor %}
+        </ul>
+
+        <h2>How it works</h2>
+        <ol class="process-list process-list--compact">
+          {% for title, description in process_steps %}
+          <li class="process-step">
+            <span class="process-number">{{ forloop.counter|stringformat:"02d" }}</span>
+            <div>
+              <h3>{{ title }}</h3>
+              <p>{{ description }}</p>
+            </div>
+          </li>
+          {% endfor %}
+        </ol>
+
+        {% if related_projects %}
+        <h2>Relevant work</h2>
+        <div class="project-grid project-grid--compact">
+          {% for p in related_projects %}
+          <article class="project-card">
+            <a class="project-media" href="{{ p.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+              {% if p.image %}
+              <img src="{{ p.image.url }}" alt="" loading="lazy">
+              {% else %}
+              <span class="project-placeholder"><span>{{ p.name|default:"Project"|slice:":2" }}</span></span>
+              {% endif %}
+              {% if p.date %}<span class="project-year">{{ p.date|date:"Y" }}</span>{% endif %}
+            </a>
+            <div class="project-body">
+              <span class="project-kicker">{% if p.is_demo %}Demonstration{% else %}Case study{% endif %}</span>
+              <h3><a href="{{ p.get_absolute_url }}">{{ p.name|default:"Untitled project" }}</a></h3>
+              <p class="project-description">{{ p.description|default:""|truncatechars:140 }}</p>
+              <div class="project-links">
+                <a class="project-link" href="{{ p.get_absolute_url }}">{% if p.is_demo %}View demonstration{% else %}Read case study{% endif %}</a>
+              </div>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </article>
+
+      <aside class="case-sidebar">
+        <div class="side-card">
+          <h2>At a glance</h2>
+          <div class="fact-list">
+            <div>
+              <span class="fact-label">Service group</span>
+              <span>{{ service.eyebrow }}</span>
+            </div>
+            <div>
+              <span class="fact-label">Best for</span>
+              <span>{{ service.short_name }}</span>
+            </div>
+            <div>
+              <span class="fact-label">Starting point</span>
+              <span>{{ service.starting_point }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="side-card side-card--accent">
+          <h2>Request this service</h2>
+          <p>The form will preselect this service. Include a sample input and the output you need; do not send credentials or sensitive documents by email.</p>
+          <a class="btn btn-primary btn-sm" href="{% url 'main:contact' %}?service={{ service.slug }}">Start an inquiry</a>
+        </div>
+
+        <div class="side-card">
+          <h2>Other services</h2>
+          <ul class="side-link-list">
+            {% for item in other_services %}
+            <li><a href="{% url 'main:service' slug=item.slug %}">{{ item.name }}</a></li>
+            {% endfor %}
+            <li><a href="{% url 'main:services' %}">Full service catalog</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+{% endblock %}
